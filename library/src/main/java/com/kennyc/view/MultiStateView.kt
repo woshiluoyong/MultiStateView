@@ -14,40 +14,34 @@ import android.widget.FrameLayout
 import androidx.annotation.LayoutRes
 import com.kennyc.multistateview.R
 
-class MultiStateView
-@JvmOverloads constructor(context: Context,
-                          attrs: AttributeSet? = null,
-                          defStyle: Int = 0) : FrameLayout(context, attrs, defStyle) {
-
-    enum class ViewState {
-        CONTENT,
-        LOADING,
-        ERROR,
-        EMPTY
-    }
-
+class MultiStateView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) : FrameLayout(context, attrs, defStyle) {
     private var contentView: View? = null
-
     private var loadingView: View? = null
-
+    private var noNetView: View? = null
     private var errorView: View? = null
-
     private var emptyView: View? = null
-
+    private var customView: View? = null
     var listener: StateListener? = null
-
     var animateLayoutChanges: Boolean = false
 
     var viewState: ViewState = ViewState.CONTENT
         set(value) {
             val previousField = field
-
-            if (value != previousField) {
-                field = value
-                setView(previousField)
-                listener?.onStateChanged(value)
-            }
+            //if (value != previousField) {
+            field = value
+            setView(previousField)
+            listener?.onStateChanged(value)
+            //}//end of if
         }
+
+    enum class ViewState {
+        CONTENT,
+        LOADING,
+        NoNet,
+        ERROR,
+        EMPTY,
+        CUSTOM
+    }
 
     init {
         val inflater = LayoutInflater.from(getContext())
@@ -58,44 +52,63 @@ class MultiStateView
             val inflatedLoadingView = inflater.inflate(loadingViewResId, this, false)
             loadingView = inflatedLoadingView
             addView(inflatedLoadingView, inflatedLoadingView.layoutParams)
-        }
+        }//end of if
+
+        val noNetViewResId = a.getResourceId(R.styleable.MultiStateView_msv_noNetView, -1)
+        if (noNetViewResId > -1) {
+            val inflatedNoNetView = inflater.inflate(noNetViewResId, this, false)
+            noNetView = inflatedNoNetView
+            addView(inflatedNoNetView, inflatedNoNetView.layoutParams)
+        }//end of if
 
         val emptyViewResId = a.getResourceId(R.styleable.MultiStateView_msv_emptyView, -1)
         if (emptyViewResId > -1) {
             val inflatedEmptyView = inflater.inflate(emptyViewResId, this, false)
             emptyView = inflatedEmptyView
             addView(inflatedEmptyView, inflatedEmptyView.layoutParams)
-        }
+        }//end of if
 
         val errorViewResId = a.getResourceId(R.styleable.MultiStateView_msv_errorView, -1)
         if (errorViewResId > -1) {
             val inflatedErrorView = inflater.inflate(errorViewResId, this, false)
             errorView = inflatedErrorView
             addView(inflatedErrorView, inflatedErrorView.layoutParams)
-        }
+        }//end of if
 
-        viewState = when (a.getInt(R.styleable.MultiStateView_msv_viewState, VIEW_STATE_CONTENT)) {
-            VIEW_STATE_ERROR -> ViewState.ERROR
-            VIEW_STATE_EMPTY -> ViewState.EMPTY
-            VIEW_STATE_LOADING -> ViewState.LOADING
-            else -> ViewState.CONTENT
+        val customViewResId = a.getResourceId(R.styleable.MultiStateView_msv_customView, -1)
+        if (customViewResId > -1) {
+            val inflatedCustomView = inflater.inflate(customViewResId, this, false)
+            customView = inflatedCustomView
+            addView(inflatedCustomView, inflatedCustomView.layoutParams)
+        }//end of if
+
+        val ordinal = a.getInt(R.styleable.MultiStateView_msv_viewState, ViewState.CONTENT.ordinal)
+        run breaking@{
+            ViewState.values().forEach {
+                if(it.ordinal == ordinal){
+                    viewState = it
+                    return@breaking
+                }//end of if
+            }
         }
         animateLayoutChanges = a.getBoolean(R.styleable.MultiStateView_msv_animateViewChanges, false)
         a.recycle()
     }
 
     /**
-     * Returns the [View] associated with the [com.kennyc.view.MultiStateView.ViewState]
+     * Returns the [View] associated with the [ViewState]
      *
-     * @param state The [com.kennyc.view.MultiStateView.ViewState] with to return the view for
-     * @return The [View] associated with the [com.kennyc.view.MultiStateView.ViewState], null if no view is present
+     * @param state The [ViewState] with to return the view for
+     * @return The [View] associated with the [ViewState], null if no view is present
      */
     fun getView(state: ViewState): View? {
         return when (state) {
             ViewState.LOADING -> loadingView
             ViewState.CONTENT -> contentView
+            ViewState.NoNet -> noNetView
             ViewState.EMPTY -> emptyView
             ViewState.ERROR -> errorView
+            ViewState.CUSTOM -> customView
         }
     }
 
@@ -103,8 +116,8 @@ class MultiStateView
      * Sets the view for the given view state
      *
      * @param view          The [View] to use
-     * @param state         The [com.kennyc.view.MultiStateView.ViewState]to set
-     * @param switchToState If the [com.kennyc.view.MultiStateView.ViewState] should be switched to
+     * @param state         The [ViewState]to set
+     * @param switchToState If the [ViewState] should be switched to
      */
     fun setViewForState(view: View, state: ViewState, switchToState: Boolean = false) {
         when (state) {
@@ -113,19 +126,26 @@ class MultiStateView
                 loadingView = view
                 addView(view)
             }
-
+            ViewState.NoNet -> {
+                if (noNetView != null) removeView(noNetView)
+                noNetView = view
+                addView(view)
+            }
             ViewState.EMPTY -> {
                 if (emptyView != null) removeView(emptyView)
                 emptyView = view
                 addView(view)
             }
-
             ViewState.ERROR -> {
                 if (errorView != null) removeView(errorView)
                 errorView = view
                 addView(view)
             }
-
+            ViewState.CUSTOM -> {
+                if (customView != null) removeView(customView)
+                customView = view
+                addView(view)
+            }
             ViewState.CONTENT -> {
                 if (contentView != null) removeView(contentView)
                 contentView = view
@@ -137,11 +157,11 @@ class MultiStateView
     }
 
     /**
-     * Sets the [View] for the given [com.kennyc.view.MultiStateView.ViewState]
+     * Sets the [View] for the given [ViewState]
      *
      * @param layoutRes     Layout resource id
-     * @param state         The [com.kennyc.view.MultiStateView.ViewState] to set
-     * @param switchToState If the [com.kennyc.view.MultiStateView.ViewState] should be switched to
+     * @param state         The [ViewState] to set
+     * @param switchToState If the [ViewState] should be switched to
      */
     fun setViewForState(@LayoutRes layoutRes: Int, state: ViewState, switchToState: Boolean = false) {
         val view = LayoutInflater.from(context).inflate(layoutRes, this, false)
@@ -221,19 +241,23 @@ class MultiStateView
     private fun isValidContentView(view: View): Boolean {
         return if (contentView != null && contentView !== view) {
             false
-        } else view != loadingView && view != errorView && view != emptyView
+        } else view != loadingView && view != noNetView && view != errorView && view != emptyView && view != customView
     }
 
+    fun isContentViewShow(): Boolean = viewState == ViewState.CONTENT
+
     /**
-     * Shows the [View] based on the [com.kennyc.view.MultiStateView.ViewState]
+     * Shows the [View] based on the [ViewState]
      */
     private fun setView(previousState: ViewState) {
         when (viewState) {
             ViewState.LOADING -> {
                 requireNotNull(loadingView).apply {
                     contentView?.visibility = View.GONE
+                    noNetView?.visibility = View.GONE
                     errorView?.visibility = View.GONE
                     emptyView?.visibility = View.GONE
+                    customView?.visibility = View.GONE
 
                     if (animateLayoutChanges) {
                         animateLayoutChange(getView(previousState))
@@ -242,12 +266,28 @@ class MultiStateView
                     }
                 }
             }
+            ViewState.NoNet -> {
+                requireNotNull(noNetView).apply {
+                    contentView?.visibility = View.GONE
+                    errorView?.visibility = View.GONE
+                    emptyView?.visibility = View.GONE
+                    loadingView?.visibility = View.GONE
+                    customView?.visibility = View.GONE
 
+                    if (animateLayoutChanges) {
+                        animateLayoutChange(getView(previousState))
+                    } else {
+                        visibility = View.VISIBLE
+                    }
+                }
+            }
             ViewState.EMPTY -> {
                 requireNotNull(emptyView).apply {
                     contentView?.visibility = View.GONE
+                    noNetView?.visibility = View.GONE
                     errorView?.visibility = View.GONE
                     loadingView?.visibility = View.GONE
+                    customView?.visibility = View.GONE
 
                     if (animateLayoutChanges) {
                         animateLayoutChange(getView(previousState))
@@ -256,11 +296,27 @@ class MultiStateView
                     }
                 }
             }
-
             ViewState.ERROR -> {
                 requireNotNull(errorView).apply {
                     contentView?.visibility = View.GONE
                     loadingView?.visibility = View.GONE
+                    noNetView?.visibility = View.GONE
+                    emptyView?.visibility = View.GONE
+                    customView?.visibility = View.GONE
+
+                    if (animateLayoutChanges) {
+                        animateLayoutChange(getView(previousState))
+                    } else {
+                        visibility = View.VISIBLE
+                    }
+                }
+            }
+            ViewState.CUSTOM -> {
+                requireNotNull(customView).apply {
+                    contentView?.visibility = View.GONE
+                    loadingView?.visibility = View.GONE
+                    noNetView?.visibility = View.GONE
+                    errorView?.visibility = View.GONE
                     emptyView?.visibility = View.GONE
 
                     if (animateLayoutChanges) {
@@ -270,12 +326,13 @@ class MultiStateView
                     }
                 }
             }
-
             ViewState.CONTENT -> {
-                requireNotNull(contentView).apply {
+                contentView?.apply {
                     loadingView?.visibility = View.GONE
+                    noNetView?.visibility = View.GONE
                     errorView?.visibility = View.GONE
                     emptyView?.visibility = View.GONE
+                    customView?.visibility = View.GONE
 
                     if (animateLayoutChanges) {
                         animateLayoutChange(getView(previousState))
@@ -354,8 +411,3 @@ class MultiStateView
         }
     }
 }
-
-private const val VIEW_STATE_CONTENT = 0
-private const val VIEW_STATE_ERROR = 1
-private const val VIEW_STATE_EMPTY = 2
-private const val VIEW_STATE_LOADING = 3

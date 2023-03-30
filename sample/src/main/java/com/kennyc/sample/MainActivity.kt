@@ -25,6 +25,10 @@ class MainActivity : AppCompatActivity(), MultiStateView.StateListener {
                     Toast.makeText(applicationContext, "Fetching Data", Toast.LENGTH_SHORT).show()
                     multiStateView.postDelayed({ multiStateView.viewState = MultiStateView.ViewState.CONTENT }, 3000L)
                 }
+        multiStateView.getView(MultiStateView.ViewState.NoNet)?.findViewById<Button>(R.id.retry)
+            ?.setOnClickListener {
+                Toast.makeText(applicationContext, "😄,The network is still not connected!", Toast.LENGTH_SHORT).show()
+            }
 
         val list: ListView = multiStateView.findViewById(R.id.list)
 
@@ -47,17 +51,22 @@ class MainActivity : AppCompatActivity(), MultiStateView.StateListener {
                 multiStateView.viewState = MultiStateView.ViewState.ERROR
                 return true
             }
-
             R.id.empty -> {
                 multiStateView.viewState = MultiStateView.ViewState.EMPTY
                 return true
             }
-
             R.id.content -> {
                 multiStateView.viewState = MultiStateView.ViewState.CONTENT
                 return true
             }
-
+            R.id.noNet -> {
+                multiStateView.viewState = MultiStateView.ViewState.NoNet
+                return true
+            }
+            R.id.custom -> {
+                multiStateView.viewState = MultiStateView.ViewState.CUSTOM
+                return true
+            }
             R.id.loading -> {
                 multiStateView.viewState = MultiStateView.ViewState.LOADING
                 return true

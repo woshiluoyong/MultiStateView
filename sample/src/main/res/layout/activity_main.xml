@@ -7,14 +7,14 @@
     app:msv_errorView="@layout/error_view"
     app:msv_emptyView="@layout/empty_view"
     app:msv_loadingView="@layout/loading_view"
+    app:msv_noNetView="@layout/no_net_view"
+    app:msv_customView="@layout/custom_view"
     app:msv_viewState="content"
     app:msv_animateViewChanges="true"
     tools:context=".MainActivity">
-
     <ListView
         android:id="@+id/list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:listitem="@android:layout/simple_list_item_1" />
-
 </com.kennyc.view.MultiStateView>
