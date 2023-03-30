@@ -8,11 +8,15 @@ The four different states the view can be in are:
 - Empty
 - Error
 - Loading
+- NoNet
+- Custom
 
-![screenshot](https://github.com/Kennyc1012/MultiStateView/blob/master/art/content.png)
-![screenshot](https://github.com/Kennyc1012/MultiStateView/blob/master/art/loading.png)
-![screenshot](https://github.com/Kennyc1012/MultiStateView/blob/master/art/empty.png)
-![screenshot](https://github.com/Kennyc1012/MultiStateView/blob/master/art/error.png)
+![screenshot](https://github.com/Kennyc1012/MultiStateView/blob/master/art/content.jpg)
+![screenshot](https://github.com/Kennyc1012/MultiStateView/blob/master/art/loading.jpg)
+![screenshot](https://github.com/Kennyc1012/MultiStateView/blob/master/art/empty.jpg)
+![screenshot](https://github.com/Kennyc1012/MultiStateView/blob/master/art/error.jpg)
+![screenshot](https://github.com/Kennyc1012/MultiStateView/blob/master/art/nonet.jpg)
+![screenshot](https://github.com/Kennyc1012/MultiStateView/blob/master/art/custom.jpg)
 
 
 # Using MultiStateView
@@ -27,6 +31,8 @@ MultiStateView can be used the same as any other view by adding it as a layout f
     app:msv_errorView="@layout/error_view"
     app:msv_emptyView="@layout/empty_view"
     app:msv_loadingView="@layout/loading_view"
+    app:msv_noNetView="@layout/no_net_view"
+    app:msv_customView="@layout/custom_view"
     app:msv_viewState="loading">
     
       <ListView
@@ -42,6 +48,8 @@ The attributes to set for MultiStateView are
 <attr name="msv_loadingView" format="reference" />
 <attr name="msv_emptyView" format="reference" />
 <attr name="msv_errorView" format="reference" />
+<attr name="msv_noNetView" format="reference" />
+<attr name="msv_customView" format="reference" />
 <attr name="msv_viewState" format="enum">
 <attr name="msv_animateViewChanges" format="boolean" />
 ```
@@ -49,6 +57,8 @@ The attributes to set for MultiStateView are
 `msv_loadingView` is the view to be used for `VIEW_STATE_LOADING` <br>
 `msv_emptyView` is the view to be used for `VIEW_STATE_EMPTY` <br>
 `msv_errorView` is the view to be used for `VIEW_STATE_ERROR` <br>
+`msv_noNetView` is the view to be used for `VIEW_STATE_NONET` <br>
+`msv_customView` is the view to be used for `VIEW_STATE_CUSTOM` <br>
 `msv_viewState` is the [ViewState](https://github.com/Kennyc1012/MultiStateView/blob/master/library/src/main/java/com/kennyc/view/MultiStateView.kt#L34) for the MultiStateView<br>
 `msv_animateViewChanges` is a flag to set whether the views should animate in and out when switching states. `false` by default<br>
 `VIEW_STATE_CONTENT` is determined by whatever is inside of the tags via XML. <b>NOTE a Content view must be set for the view to function, this is by design.</b>
@@ -64,12 +74,22 @@ multiStateView.setViewState(@NonNull ViewState state)
 
 You can also get the View for the accompanying ViewState by calling
 ```kotlin 
-multiStateView.getView(state: ViewState):View?
+multiStateView.getView(state: ViewState): View?
 ```
 or in java
 ```java
 @Nullable
 public View getView(@NonNull ViewState state)
+```
+
+You can also check the contentView is show or hide by calling
+```kotlin 
+multiStateView.isContentViewShow(): Boolean
+```
+or in java
+```java
+@Nullable
+public boolean isContentViewShow()
 ```
 
 # Including in your project
