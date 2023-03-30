@@ -11,12 +11,12 @@ The four different states the view can be in are:
 - NoNet
 - Custom
 
-![screenshot](https://github.com/Kennyc1012/MultiStateView/blob/master/art/content.jpg)
-![screenshot](https://github.com/Kennyc1012/MultiStateView/blob/master/art/loading.jpg)
-![screenshot](https://github.com/Kennyc1012/MultiStateView/blob/master/art/empty.jpg)
-![screenshot](https://github.com/Kennyc1012/MultiStateView/blob/master/art/error.jpg)
-![screenshot](https://github.com/Kennyc1012/MultiStateView/blob/master/art/nonet.jpg)
-![screenshot](https://github.com/Kennyc1012/MultiStateView/blob/master/art/custom.jpg)
+![screenshot](https://github.com/woshiluoyong/MultiStateView/blob/master/art/content.jpg)
+![screenshot](https://github.com/woshiluoyong/MultiStateView/blob/master/art/loading.jpg)
+![screenshot](https://github.com/woshiluoyong/MultiStateView/blob/master/art/empty.jpg)
+![screenshot](https://github.com/woshiluoyong/MultiStateView/blob/master/art/error.jpg)
+![screenshot](https://github.com/woshiluoyong/MultiStateView/blob/master/art/nonet.jpg)
+![screenshot](https://github.com/woshiluoyong/MultiStateView/blob/master/art/custom.jpg)
 
 
 # Using MultiStateView
