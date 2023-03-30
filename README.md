@@ -104,7 +104,7 @@ repositories {
 ## Add dependency
 ```groovy
 dependencies {
-    implementation  'com.github.woshiluoyong:MultiStateView:2.2.0'
+    implementation  'com.github.woshiluoyong:MultiStateView:2.5.0'
 }
 ```
 
