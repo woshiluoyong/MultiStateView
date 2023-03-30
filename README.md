@@ -59,7 +59,7 @@ The attributes to set for MultiStateView are
 `msv_errorView` is the view to be used for `VIEW_STATE_ERROR` <br>
 `msv_noNetView` is the view to be used for `VIEW_STATE_NONET` <br>
 `msv_customView` is the view to be used for `VIEW_STATE_CUSTOM` <br>
-`msv_viewState` is the [ViewState](https://github.com/Kennyc1012/MultiStateView/blob/master/library/src/main/java/com/kennyc/view/MultiStateView.kt#L34) for the MultiStateView<br>
+`msv_viewState` is the [ViewState](https://github.com/woshiluoyong/MultiStateView/blob/master/library/src/main/java/com/kennyc/view/MultiStateView.kt#L34) for the MultiStateView<br>
 `msv_animateViewChanges` is a flag to set whether the views should animate in and out when switching states. `false` by default<br>
 `VIEW_STATE_CONTENT` is determined by whatever is inside of the tags via XML. <b>NOTE a Content view must be set for the view to function, this is by design.</b>
 
@@ -104,12 +104,12 @@ repositories {
 ## Add dependency
 ```groovy
 dependencies {
-    implementation  'com.github.Kennyc1012:MultiStateView:2.2.0'
+    implementation  'com.github.woshiluoyong:MultiStateView:2.2.0'
 }
 ```
 
 # Contribution
-Pull requests are welcomed and encouraged. If you experience any bugs, please file an [issue](https://github.com/Kennyc1012/MultiStateView/issues)
+Pull requests are welcomed and encouraged. If you experience any bugs, please file an [issue](https://github.com/woshiluoyong/MultiStateView/issues)
 
 License
 =======
