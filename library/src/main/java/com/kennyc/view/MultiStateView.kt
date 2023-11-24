@@ -21,8 +21,9 @@ class MultiStateView @JvmOverloads constructor(context: Context, attrs: Attribut
     private var errorView: View? = null
     private var emptyView: View? = null
     private var customView: View? = null
+    private var animateLayoutChanges: Boolean = false
+    var isUseSysInstanceState: Boolean = true
     var listener: StateListener? = null
-    var animateLayoutChanges: Boolean = false
 
     var viewState: ViewState = ViewState.CONTENT
         set(value) {
@@ -179,6 +180,7 @@ class MultiStateView @JvmOverloads constructor(context: Context, attrs: Attribut
     }
 
     override fun onSaveInstanceState(): Parcelable? {
+        if(true != isUseSysInstanceState)return null
         return when (val superState = super.onSaveInstanceState()) {
             null -> superState
             else -> SavedState(superState, viewState)
@@ -186,6 +188,7 @@ class MultiStateView @JvmOverloads constructor(context: Context, attrs: Attribut
     }
 
     override fun onRestoreInstanceState(state: Parcelable) {
+        if(true != isUseSysInstanceState)return
         if (state is SavedState) {
             super.onRestoreInstanceState(state.superState)
             viewState = state.state
@@ -252,7 +255,7 @@ class MultiStateView @JvmOverloads constructor(context: Context, attrs: Attribut
     private fun setView(previousState: ViewState) {
         when (viewState) {
             ViewState.LOADING -> {
-                requireNotNull(loadingView).apply {
+                loadingView?.apply {
                     contentView?.visibility = View.GONE
                     noNetView?.visibility = View.GONE
                     errorView?.visibility = View.GONE
@@ -267,7 +270,7 @@ class MultiStateView @JvmOverloads constructor(context: Context, attrs: Attribut
                 }
             }
             ViewState.NoNet -> {
-                requireNotNull(noNetView).apply {
+                noNetView?.apply {
                     contentView?.visibility = View.GONE
                     errorView?.visibility = View.GONE
                     emptyView?.visibility = View.GONE
@@ -282,7 +285,7 @@ class MultiStateView @JvmOverloads constructor(context: Context, attrs: Attribut
                 }
             }
             ViewState.EMPTY -> {
-                requireNotNull(emptyView).apply {
+                emptyView?.apply {
                     contentView?.visibility = View.GONE
                     noNetView?.visibility = View.GONE
                     errorView?.visibility = View.GONE
@@ -297,7 +300,7 @@ class MultiStateView @JvmOverloads constructor(context: Context, attrs: Attribut
                 }
             }
             ViewState.ERROR -> {
-                requireNotNull(errorView).apply {
+                errorView?.apply {
                     contentView?.visibility = View.GONE
                     loadingView?.visibility = View.GONE
                     noNetView?.visibility = View.GONE
@@ -312,7 +315,7 @@ class MultiStateView @JvmOverloads constructor(context: Context, attrs: Attribut
                 }
             }
             ViewState.CUSTOM -> {
-                requireNotNull(customView).apply {
+                customView?.apply {
                     contentView?.visibility = View.GONE
                     loadingView?.visibility = View.GONE
                     noNetView?.visibility = View.GONE
@@ -351,7 +354,7 @@ class MultiStateView @JvmOverloads constructor(context: Context, attrs: Attribut
      */
     private fun animateLayoutChange(previousView: View?) {
         if (previousView == null) {
-            requireNotNull(getView(viewState)).visibility = View.VISIBLE
+            getView(viewState)?.visibility = View.VISIBLE
             return
         }
 
@@ -364,9 +367,10 @@ class MultiStateView @JvmOverloads constructor(context: Context, attrs: Attribut
 
                 override fun onAnimationEnd(animation: Animator) {
                     previousView.visibility = View.GONE
-                    val currentView = requireNotNull(getView(viewState))
-                    currentView.visibility = View.VISIBLE
-                    ObjectAnimator.ofFloat(currentView, "alpha", 0.0f, 1.0f).setDuration(250L).start()
+                    getView(viewState)?.apply {
+                        visibility = View.VISIBLE
+                        ObjectAnimator.ofFloat(this, "alpha", 0.0f, 1.0f).setDuration(250L).start()
+                    }
                 }
             })
         }.start()
